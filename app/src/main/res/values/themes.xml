@@ -1,0 +1,71 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Base.Theme.TokoApp" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <!-- Customize your light theme here. -->
+        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+
+        <!-- Color. -->
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/blue_1</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <!-- Secondary brand color. -->
+        <item name="colorSecondary">@color/blue_1</item>
+        <item name="colorOnSecondary">@color/white</item>
+        <!-- Surface brand color. -->
+        <item name="colorSurface">@color/white</item>
+        <item name="colorOnSurface">@color/blue_1</item>
+        <!-- Background brand color. -->
+        <item name="background">@color/grey_1</item>
+        <item name="colorOnBackground">@color/white</item>
+
+        <!--Typography-->
+        <item name="textAppearanceHeadline1">@style/TextAppearance.MdcTypographyStyles.Headline1
+        </item>
+        <item name="textAppearanceHeadline2">@style/TextAppearance.MdcTypographyStyles.Headline2
+        </item>
+        <item name="textAppearanceHeadline3">@style/TextAppearance.MdcTypographyStyles.Headline3
+        </item>
+        <item name="textAppearanceHeadline4">@style/TextAppearance.MdcTypographyStyles.Headline4
+        </item>
+        <item name="textAppearanceHeadline5">@style/TextAppearance.MdcTypographyStyles.Headline5
+        </item>
+        <item name="textAppearanceHeadline6">@style/TextAppearance.MdcTypographyStyles.Headline6
+        </item>
+        <item name="textAppearanceSubtitle1">@style/TextAppearance.MdcTypographyStyles.Subtitle1
+        </item>
+        <item name="textAppearanceSubtitle2">@style/TextAppearance.MdcTypographyStyles.Subtitle2
+        </item>
+        <item name="textAppearanceBody1">@style/TextAppearance.MdcTypographyStyles.Body1</item>
+        <item name="textAppearanceBody2">@style/TextAppearance.MdcTypographyStyles.Body2</item>
+        <item name="textAppearanceButton">@style/TextAppearance.MdcTypographyStyles.Button</item>
+        <item name="textAppearanceCaption">@style/TextAppearance.MdcTypographyStyles.Caption</item>
+        <item name="textAppearanceOverline">@style/TextAppearance.MdcTypographyStyles.Overline</item>
+
+    </style>
+
+    <!--Component-->
+    <style name="CustomCheckBoxStyle" parent="Widget.MaterialComponents.CompoundButton.CheckBox">
+        <item name="materialThemeOverlay">
+            @style/CheckboxOutlineColorOverlay
+        </item>
+    </style>
+
+    <style name="CheckboxOutlineColorOverlay">
+        <item name="colorControlActivated">@color/blue</item>
+        <item name="colorOnSurface">@color/blue</item>
+    </style>
+
+    <style name="OutlineCircle">
+        <item name="cornerSize">50%</item>
+    </style>
+
+    <style name="OutlineCircleIcon">
+        <item name="cornerSize">30%</item>
+    </style>
+
+    <style name="OutlineCircleCard">
+        <item name="cornerSize">5%</item>
+    </style>
+
+
+</resources>

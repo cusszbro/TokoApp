@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Toko App</string>
+
+    <string name="store_area_region">Area %1$s - Region %2$s</string>
+    <string name="tipe_outlet">Tipe Outlet : %s</string>
+    <string name="tipe_display">Tipe Display : %s</string>
+    <string name="sub_tipe_display">Sub Tipe Display : %s</string>
+    <string name="ertm">ERTM : %s</string>
+    <string name="pareto">Pareto : %s</string>
+    <string name="e_merchandising">E-Merchandising : %s</string>
+</resources>

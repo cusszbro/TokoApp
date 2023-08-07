@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:background="?colorOnBackground">
+
+    <com.google.android.material.textview.MaterialTextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Menu"
+        android:textColor="@color/orange"
+        android:textAppearance="?textAppearanceBody1"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_horizontal"
+        android:layout_marginHorizontal="8dp">
+
+        <LinearLayout
+            android:id="@+id/main_menu_ll_kunjungan"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:layout_marginHorizontal="4dp">
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_store"
+                app:shapeAppearanceOverlay="@style/OutlineCircle"
+                android:background="@color/grey_1"/>
+
+            <com.google.android.material.textview.MaterialTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Kunjungan"
+                android:textAlignment="center"
+                android:textAppearance="?textAppearanceBody2"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/main_menu_ll_target"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:layout_marginHorizontal="4dp">
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_target"
+                app:shapeAppearanceOverlay="@style/OutlineCircle"
+                android:background="@color/grey_1"/>
+
+            <com.google.android.material.textview.MaterialTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Target Install \nCDFDPC"
+                android:textAlignment="center"
+                android:textAppearance="?textAppearanceBody2"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/main_menu_ll_dashboard"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:layout_marginHorizontal="4dp">
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_dashboard"
+                app:shapeAppearanceOverlay="@style/OutlineCircle"
+                android:background="@color/grey_1"/>
+
+            <com.google.android.material.textview.MaterialTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Dashboard"
+                android:textAlignment="center"
+                android:textAppearance="?textAppearanceBody2"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/main_menu_ll_history"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:layout_marginHorizontal="4dp">
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_history"
+                app:shapeAppearanceOverlay="@style/OutlineCircle"
+                android:background="@color/grey_1"/>
+
+            <com.google.android.material.textview.MaterialTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Transmission \nHistory"
+                android:textAlignment="center"
+                android:textAppearance="?textAppearanceBody2"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_marginVertical="16dp">
+
+        <LinearLayout
+            android:id="@+id/main_menu_ll_logout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:layout_marginHorizontal="8dp">
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_logout"
+                app:shapeAppearanceOverlay="@style/OutlineCircle"
+                android:background="@color/grey_1"/>
+
+            <com.google.android.material.textview.MaterialTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Logout"
+                android:textAlignment="center"
+                android:textAppearance="?textAppearanceBody2"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

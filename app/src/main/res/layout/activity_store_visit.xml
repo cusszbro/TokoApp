@@ -1,0 +1,283 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.store.visit.StoreVisitActivity">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/store_visit_iv_background"
+            android:layout_width="match_parent"
+            android:layout_height="320dp"
+            android:src="@drawable/bg_main_menu_dashboard"
+            android:scaleType="fitXY"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+        <LinearLayout
+            android:id="@+id/linearLayoutCompat"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:elevation="16dp"
+            android:layout_marginBottom="-24dp"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintEnd_toEndOf="@id/store_visit_cv_store"
+            app:layout_constraintBottom_toTopOf="@id/store_visit_cv_store">
+
+            <ImageButton
+                android:id="@+id/store_visit_btn_navigation"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="4dp"
+                android:background="@drawable/bg_circle_gradient"
+                android:src="@drawable/ic_navigation_24"
+                app:shapeAppearanceOverlay="@style/OutlineCircle"
+                tools:contentDescription="button_navigation"/>
+
+            <ImageButton
+                android:id="@+id/store_visit_btn_camera"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="4dp"
+                android:background="@drawable/bg_circle_gradient"
+                android:src="@drawable/ic_camera_24"
+                app:shapeAppearanceOverlay="@style/OutlineCircle"
+                tools:contentDescription="button_camera"/>
+
+            <ImageButton
+                android:id="@+id/store_visit_btn_gps"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="4dp"
+                android:background="@drawable/bg_circle_gradient"
+                android:src="@drawable/ic_gps_24"
+                app:shapeAppearanceOverlay="@style/OutlineCircle"
+                tools:contentDescription="button_gps"/>
+
+        </LinearLayout>
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/store_visit_cv_store"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="-24dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginHorizontal="8dp"
+            app:cardElevation="8dp"
+            app:shapeAppearance="@style/OutlineCircleCard"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/store_visit_iv_background">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:layout_marginHorizontal="8dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center|start"
+                        android:layout_marginTop="36dp">
+
+                        <com.google.android.material.imageview.ShapeableImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/ic_location_24"/>
+
+                        <com.google.android.material.textview.MaterialTextView
+                            android:id="@+id/store_visit_location_status"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Lokasi sesuai"
+                            android:layout_marginStart="8dp"
+                            android:textAppearance="?textAppearanceBody2"/>
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/store_visit_btn_reset"
+                            android:layout_width="120dp"
+                            android:layout_height="wrap_content"
+                            android:text="Reset"
+                            android:textAllCaps="false"
+                            app:shapeAppearance="@style/OutlineCircleIcon"
+                            android:layout_marginStart="24dp"/>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center|start">
+
+                        <com.google.android.material.imageview.ShapeableImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/ic_store_visit"
+                            android:layout_gravity="top"/>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:layout_marginStart="8dp">
+
+                            <com.google.android.material.textview.MaterialTextView
+                                android:id="@+id/store_visit_tv_store_name"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="Toko B"
+                                android:textAppearance="?textAppearanceBody1"/>
+
+                            <com.google.android.material.textview.MaterialTextView
+                                android:id="@+id/store_visit_tv_address"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="Jalan Pal Merah No 25 Jakarta Barat"
+                                android:textAppearance="?textAppearanceCaption"
+                                android:layout_marginTop="8dp"/>
+
+                            <com.google.android.material.textview.MaterialTextView
+                                android:id="@+id/store_visit_tv_outlet_type"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="@string/tipe_outlet"
+                                android:textAppearance="?textAppearanceBody2"
+                                android:layout_marginTop="8dp"/>
+
+                            <com.google.android.material.textview.MaterialTextView
+                                android:id="@+id/store_visit_tv_display_type"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="@string/tipe_display"
+                                android:textAppearance="?textAppearanceBody2"
+                                android:layout_marginTop="8dp"/>
+
+                            <com.google.android.material.textview.MaterialTextView
+                                android:id="@+id/store_visit_tv_display_subtype"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="@string/sub_tipe_display"
+                                android:textAppearance="?textAppearanceBody2"
+                                android:layout_marginTop="8dp"/>
+
+                            <com.google.android.material.textview.MaterialTextView
+                                android:id="@+id/store_visit_tv_ertm"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="@string/ertm"
+                                android:textAppearance="?textAppearanceBody2"
+                                android:layout_marginTop="8dp"/>
+
+                            <com.google.android.material.textview.MaterialTextView
+                                android:id="@+id/store_visit_tv_pareto"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="@string/pareto"
+                                android:textAppearance="?textAppearanceBody2"
+                                android:layout_marginTop="8dp"/>
+
+                            <com.google.android.material.textview.MaterialTextView
+                                android:id="@+id/store_visit_tv_emerchandising"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="@string/e_merchandising"
+                                android:textAppearance="?textAppearanceBody2"
+                                android:layout_marginTop="8dp"/>
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center|start"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginBottom="48dp">
+
+                        <com.google.android.material.imageview.ShapeableImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/ic_note_36"
+                            android:layout_gravity="top"/>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:layout_marginStart="8dp">
+
+                            <com.google.android.material.textview.MaterialTextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="Last Visit"
+                                android:textAppearance="?textAppearanceBody1"/>
+
+                            <com.google.android.material.textview.MaterialTextView
+                                android:id="@+id/store_visit_tv_last_visit"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="05 - 09 -2018"
+                                android:textAppearance="?textAppearanceCaption"
+                                android:layout_marginTop="8dp"/>
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+            
+        </com.google.android.material.card.MaterialCardView>
+        
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginVertical="16dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/store_visit_cv_store">
+            
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/store_visit_btn_no_visit"
+                android:layout_width="180dp"
+                android:layout_height="64dp"
+                android:text="No Visit"
+                android:textAllCaps="false"
+                android:backgroundTint="@color/red_1"
+                app:shapeAppearance="@style/OutlineCircleIcon"
+                android:layout_marginHorizontal="8dp"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/store_visit_btn_visit"
+                android:layout_width="180dp"
+                android:layout_height="64dp"
+                android:text="Visit"
+                android:textAllCaps="false"
+                app:shapeAppearance="@style/OutlineCircleIcon"
+                android:layout_marginHorizontal="8dp"/>
+
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.core.widget.NestedScrollView>
