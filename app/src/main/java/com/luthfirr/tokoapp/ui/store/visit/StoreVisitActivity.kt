@@ -124,6 +124,15 @@ class StoreVisitActivity : AppCompatActivity() {
 
             storeVisitTvLastVisit.text = storeData?.lastVisited.toString()
 
+            if (storeData?.picture != null) {
+                val myFile = File(storeData.picture)
+
+                myFile.let { file ->
+                    rotateFile(file)
+                    storeVisitIvBackground.setImageBitmap(BitmapFactory.decodeFile(file.path))
+                }
+            }
+
         }
     }
 
@@ -230,5 +239,9 @@ class StoreVisitActivity : AppCompatActivity() {
 
         private val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.CAMERA)
         private const val REQUEST_CODE_PERMISSIONS = 10
+
+        const val ACTION_GEOFENCE_TRANSITION = "action_transition"
+        const val TRANSITION = "transition"
+        const val ACTION_GEOFENCE_EVENT = "geofence"
     }
 }
