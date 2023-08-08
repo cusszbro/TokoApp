@@ -41,7 +41,6 @@ class StoreVisitActivity : AppCompatActivity() {
     private val viewModel : StoreVisitViewModel by viewModels()
 
     private lateinit var currentPhotoPath: String
-    private var storeEntity: StoreEntity? = null
     private var visitedSaved = false
     private var photoSaved = false
 
@@ -150,14 +149,6 @@ class StoreVisitActivity : AppCompatActivity() {
         }
     }
 
-    private fun checkDataIsSaved() {
-        if (photoSaved && visitedSaved) {
-            val intent = Intent(this@StoreVisitActivity, StoreDetailActivity::class.java)
-            intent.putExtra(StoreDetailActivity.STORE, storeEntity?.roomId)
-            startActivity(intent)
-        }
-    }
-
     private fun initListener(storeData : StoreEntity?) {
         binding.apply {
             storeVisitBtnReset.setOnClickListener {
@@ -187,7 +178,7 @@ class StoreVisitActivity : AppCompatActivity() {
                     viewModel.updateVisited(it, true, System.currentTimeMillis())
                 }
                 val intent = Intent(this@StoreVisitActivity, StoreDetailActivity::class.java)
-                intent.putExtra(StoreDetailActivity.STORE, storeEntity?.roomId)
+                intent.putExtra(StoreDetailActivity.STORE, storeData)
                 startActivity(intent)
             }
 

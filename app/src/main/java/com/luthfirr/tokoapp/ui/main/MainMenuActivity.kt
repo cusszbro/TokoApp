@@ -37,7 +37,6 @@ class MainMenuActivity : AppCompatActivity() {
             }
 
             menuLayout.mainMenuLlKunjungan.setOnClickListener {
-                makeToast(this@MainMenuActivity, "Kamu memilih Menu Kunjungan")
                 startActivity(Intent(this@MainMenuActivity, StoreListActivity::class.java))
             }
 

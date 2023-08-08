@@ -48,9 +48,11 @@
             android:id="@+id/main_menu_profile_photo"
             android:layout_width="108dp"
             android:layout_height="108dp"
-            android:src="@drawable/ic_account_circle_24"
+            android:src="@drawable/profile_photo"
             android:background="@color/white"
             app:shapeAppearanceOverlay="@style/OutlineCircle"
+            app:strokeWidth="2dp"
+            app:strokeColor="@color/white"
             android:layout_marginBottom="-48dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -66,7 +68,7 @@
             <com.google.android.material.textview.MaterialTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Name"
+                android:text="Mitha Khairulnisa"
                 android:textAppearance="?textAppearanceHeadline5"
                 android:layout_gravity="center"
                 android:layout_marginTop="8dp"/>
@@ -74,7 +76,7 @@
             <com.google.android.material.textview.MaterialTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Role"
+                android:text="Role : Supervisor"
                 android:textAppearance="?textAppearanceHeadline6"
                 android:layout_gravity="center"
                 android:layout_marginTop="4dp"/>
@@ -82,7 +84,7 @@
             <com.google.android.material.textview.MaterialTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="NIK"
+                android:text="NIK : MD00001"
                 android:textColor="@color/grey_2"
                 android:textAppearance="?textAppearanceHeadline5"
                 android:layout_gravity="center"
@@ -147,7 +149,7 @@
                             android:id="@+id/main_menu_icon_percentage"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:src="@drawable/ic_data_thresholding_48"
+                            android:src="@drawable/ic_percentage_48"
                             android:layout_marginStart="16dp"/>
 
                         <com.google.android.material.textview.MaterialTextView
