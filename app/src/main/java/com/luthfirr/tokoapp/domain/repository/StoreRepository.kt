@@ -10,4 +10,8 @@ interface StoreRepository {
 
     fun fetchStoreList(): Flow<ApiResponse<List<StoreEntity>>>
 
+    fun fetchStore(roomId: Int): Flow<ApiResponse<StoreEntity>>
+    fun updatePicture(roomId: Int, picture: String): Flow<ApiResponse<Any>>
+    fun updateVisited(roomId: Int, visited: Boolean, lastVisited: Long): Flow<ApiResponse<Long>>
+
 }

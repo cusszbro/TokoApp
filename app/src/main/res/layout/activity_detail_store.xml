@@ -5,7 +5,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.store.detail.DetailStoreActivity">
+    tools:context=".ui.store.detail.StoreDetailActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -100,7 +100,7 @@
                 android:layout_marginHorizontal="8dp">
 
                 <com.google.android.material.imageview.ShapeableImageView
-                    android:id="@+id/main_menu_profile_photo"
+                    android:id="@+id/store_detail_profile_photo"
                     android:layout_width="64dp"
                     android:layout_height="64dp"
                     android:src="@drawable/ic_account_circle_24"
@@ -119,6 +119,7 @@
                     android:layout_marginBottom="8dp">
 
                     <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/store_detail_tv_code"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="ST0001"
@@ -128,6 +129,7 @@
                         app:layout_constraintStart_toStartOf="@id/detail_store_layout_name"/>
 
                     <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/store_detail_tv_name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Indomaret Komsen"
@@ -137,6 +139,7 @@
                         app:layout_constraintStart_toStartOf="@id/detail_store_layout_name"/>
 
                     <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/store_detail_tv_cluster"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Cluster : Small"
@@ -146,6 +149,7 @@
                         app:layout_constraintStart_toStartOf="@id/detail_store_layout_name"/>
 
                     <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/store_detail_tv_tt_regular"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="TT Regular = ERTM Big - Pareto"

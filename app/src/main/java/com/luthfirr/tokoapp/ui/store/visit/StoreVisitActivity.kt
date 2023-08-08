@@ -3,7 +3,6 @@ package com.luthfirr.tokoapp.ui.store.visit
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
@@ -11,21 +10,40 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
+import androidx.core.view.isVisible
+import androidx.lifecycle.lifecycleScope
 import com.luthfirr.tokoapp.R
 import com.luthfirr.tokoapp.data.local.entity.StoreEntity
+import com.luthfirr.tokoapp.data.remote.network.ApiResponse
 import com.luthfirr.tokoapp.databinding.ActivityStoreVisitBinding
+import com.luthfirr.tokoapp.ui.store.detail.StoreDetailActivity
 import com.luthfirr.tokoapp.utils.createCustomTempFile
+import com.luthfirr.tokoapp.utils.makeToast
 import com.luthfirr.tokoapp.utils.rotateFile
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import java.io.File
+import java.text.SimpleDateFormat
 
+@AndroidEntryPoint
 @Suppress("DEPRECATION")
 class StoreVisitActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityStoreVisitBinding
+    private val viewModel : StoreVisitViewModel by viewModels()
+
     private lateinit var currentPhotoPath: String
+    private var storeEntity: StoreEntity? = null
+    private var visitedSaved = false
+    private var photoSaved = false
 
     override fun onRequestPermissionsResult(
         requestCode: Int,
@@ -65,7 +83,8 @@ class StoreVisitActivity : AppCompatActivity() {
         val storeData = intent.getParcelableExtra<StoreEntity>(STORE)
 
         initView(storeData)
-        initListener()
+        initObserver()
+        initListener(storeData)
 
     }
 
@@ -104,19 +123,76 @@ class StoreVisitActivity : AppCompatActivity() {
                 storeData?.dcName
             )
 
-            storeVisitTvLastVisit.text = if (storeData?.lastVisited.toString() != null) storeData?.lastVisited.toString() else "-"
+            storeVisitTvLastVisit.text = storeData?.lastVisited.toString()
 
         }
     }
 
-    private fun initListener() {
+    private fun initObserver() {
+        lifecycleScope.launchWhenResumed {
+            viewModel.storePictureResult.collectLatest { apiResponse ->
+                binding.storeVisitProgressBar.isVisible = apiResponse is ApiResponse.Loading
+                if (apiResponse is ApiResponse.Error) makeToast(this@StoreVisitActivity, apiResponse.errorMessage)
+                if (apiResponse is ApiResponse.Success) {
+                    photoSaved = true
+                }
+            }
+
+            viewModel.storeVisitedResult.collectLatest { apiResponse ->
+                binding.storeVisitProgressBar.isVisible = apiResponse is ApiResponse.Loading
+                if (apiResponse is ApiResponse.Error) makeToast(this@StoreVisitActivity, apiResponse.errorMessage)
+                if (apiResponse is ApiResponse.Success) {
+                    val date = SimpleDateFormat.getDateInstance().format(apiResponse.data)
+                    binding.storeVisitTvLastVisit.text = date.toString()
+                    visitedSaved = true
+                }
+            }
+        }
+    }
+
+    private fun checkDataIsSaved() {
+        if (photoSaved && visitedSaved) {
+            val intent = Intent(this@StoreVisitActivity, StoreDetailActivity::class.java)
+            intent.putExtra(StoreDetailActivity.STORE, storeEntity?.roomId)
+            startActivity(intent)
+        }
+    }
+
+    private fun initListener(storeData : StoreEntity?) {
         binding.apply {
             storeVisitBtnReset.setOnClickListener {
-                onRestart()
+                storeVisitProgressBar.isVisible = true
+                CoroutineScope(Dispatchers.Main).launch {
+                    onRestart()
+                    delay(2000)
+                    storeVisitProgressBar.isVisible = false
+                }
+            }
+
+            storeVisitBtnNavigation.setOnClickListener {
+                makeToast(this@StoreVisitActivity, "Kamu memilih Menu Tombol Navigasi")
             }
 
             storeVisitBtnCamera.setOnClickListener {
                 startTakePhoto()
+            }
+
+            storeVisitBtnGps.setOnClickListener {
+                makeToast(this@StoreVisitActivity, "Kamu memilih Menu Tombol GPS")
+            }
+
+            storeVisitBtnVisit.setOnClickListener {
+                storeData?.roomId?.let {
+                    viewModel.updatePicture(it, currentPhotoPath)
+                    viewModel.updateVisited(it, true, System.currentTimeMillis())
+                }
+                val intent = Intent(this@StoreVisitActivity, StoreDetailActivity::class.java)
+                intent.putExtra(StoreDetailActivity.STORE, storeEntity?.roomId)
+                startActivity(intent)
+            }
+
+            storeVisitBtnNoVisit.setOnClickListener {
+                finish()
             }
         }
     }
@@ -152,7 +228,6 @@ class StoreVisitActivity : AppCompatActivity() {
             val myFile = File(currentPhotoPath)
 
             myFile.let { file ->
-//              Silakan gunakan kode ini jika mengalami perubahan rotasi
                 rotateFile(file)
                 binding.storeVisitIvBackground.setImageBitmap(BitmapFactory.decodeFile(file.path))
             }
@@ -160,9 +235,7 @@ class StoreVisitActivity : AppCompatActivity() {
     }
 
     companion object {
-        const val STORE = "store id"
-
-        const val CAMERA_X_RESULT = 200
+        const val STORE = "store"
 
         private val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.CAMERA)
         private const val REQUEST_CODE_PERMISSIONS = 10

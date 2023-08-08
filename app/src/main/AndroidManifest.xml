@@ -51,7 +51,7 @@
 <!--            </intent-filter>-->
         </activity>
         <activity
-            android:name=".ui.store.detail.DetailStoreActivity"
+            android:name=".ui.store.detail.StoreDetailActivity"
             android:exported="false" />
         <activity
             android:name=".ui.store.visit.StoreVisitActivity"

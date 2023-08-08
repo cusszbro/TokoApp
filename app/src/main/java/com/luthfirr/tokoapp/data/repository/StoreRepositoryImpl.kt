@@ -52,4 +52,41 @@ class StoreRepositoryImpl @Inject constructor(
         }
     }
 
+    override fun fetchStore(roomId: Int): Flow<ApiResponse<StoreEntity>> = flow {
+        try {
+            emit(ApiResponse.Loading)
+            val entity = storeDao.fetchStore(roomId)
+            emit(ApiResponse.Success(entity))
+        } catch (e: Exception) {
+            e.printStackTrace()
+            emit(ApiResponse.Error(e.localizedMessage!!))
+        }
+    }
+
+    override fun updatePicture(roomId: Int, picture: String): Flow<ApiResponse<Any>> = flow {
+        try {
+            emit(ApiResponse.Loading)
+            storeDao.updatePicture(roomId, picture)
+            emit(ApiResponse.Success(Any()))
+        } catch (e: Exception) {
+            e.printStackTrace()
+            emit(ApiResponse.Error(e.localizedMessage!!))
+        }
+    }
+
+    override fun updateVisited(
+        roomId: Int,
+        visited: Boolean,
+        lastVisited: Long
+    ): Flow<ApiResponse<Long>> = flow {
+        try {
+            emit(ApiResponse.Loading)
+            storeDao.updateVisited(roomId, visited, lastVisited)
+            emit(ApiResponse.Success(lastVisited))
+        } catch (e: Exception) {
+            e.printStackTrace()
+            emit(ApiResponse.Error(e.localizedMessage!!))
+        }
+    }
+
 }

@@ -36,22 +36,6 @@ class LoginActivity : AppCompatActivity() {
             val usernameText = loginEtUsername.toString()
             val passwordText = loginEtPassword.toString()
 
-//            loginEtUsername.doOnTextChanged { text, start, before, count ->
-//                if (text.toString().isNullOrEmpty()) {
-//                    makeToast("Kolom Username tidak boleh kosong")
-//                } else {
-//                    loginButtonEnable(true, "ok")
-//                }
-//            }
-//
-//            loginEtPassword.doOnTextChanged { text, start, before, count ->
-//                if (text.toString().isNullOrEmpty()) {
-//                    makeToast("Kolom Password tidak boleh kosong")
-//                } else {
-//                    loginButtonEnable(true, "ok")
-//                }
-//            }
-
             loginBtnLogin.setOnClickListener {
                 when {
                     usernameText.isEmpty() && passwordText.isEmpty() -> {
@@ -89,15 +73,4 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    private fun loginButtonEnable(enable: Boolean, status: String? = null) {
-        var userNameStatus = false
-        var userPasswordStatus = false
-        if (status == "ok") userNameStatus = enable
-        if (status == "ok") userPasswordStatus = enable
-        binding.loginBtnLogin.isEnabled = userNameStatus && userPasswordStatus
-    }
-
-    companion object {
-        const val ACTIVITY_NAME = "loginActivity"
-    }
 }
