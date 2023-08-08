@@ -18,6 +18,7 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.CircleOptions
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.MarkerOptions
@@ -119,7 +120,14 @@ class StoreListActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private fun showStartMarker(location: Location) {
         val startLocation = LatLng(location.latitude, location.longitude)
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(startLocation, 14f))
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(startLocation, 17f))
+        mMap.addCircle(
+            CircleOptions()
+                .center(startLocation)
+                .radius(100.0)
+                .fillColor(R.color.white)
+                .strokeWidth(0f)
+        )
     }
 
     private fun initObserver() {
@@ -153,6 +161,11 @@ class StoreListActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     private fun initListener() {
+
+        binding.listStoreBtnBack.setOnClickListener {
+            finish()
+        }
+
         listStoreAdapter.storeListener = {
             intent = Intent(this@StoreListActivity, StoreVisitActivity::class.java)
             intent.putExtra(StoreVisitActivity.STORE, it)

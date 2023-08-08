@@ -1,15 +1,15 @@
 package com.luthfirr.tokoapp.ui.store.detail
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import com.luthfirr.tokoapp.data.local.entity.Dashboard
 import com.luthfirr.tokoapp.data.local.entity.StoreEntity
 import com.luthfirr.tokoapp.databinding.ActivityDetailStoreBinding
-import com.luthfirr.tokoapp.ui.main.MainMenuActivity
-import com.luthfirr.tokoapp.ui.store.visit.StoreVisitActivity
+import com.luthfirr.tokoapp.ui.store.list.StoreListActivity
 import com.luthfirr.tokoapp.utils.makeToast
 
+@Suppress("DEPRECATION")
 class StoreDetailActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityDetailStoreBinding
@@ -43,7 +43,7 @@ class StoreDetailActivity : AppCompatActivity() {
     private fun initListener() {
         binding.apply {
             detailStoreBtnFinish.setOnClickListener {
-                val intent = Intent(this@StoreDetailActivity, MainMenuActivity::class.java)
+                val intent = Intent(this@StoreDetailActivity, StoreListActivity::class.java)
                 startActivity(intent)
                 finish()
             }
@@ -105,6 +105,5 @@ class StoreDetailActivity : AppCompatActivity() {
 
     companion object {
         const val STORE = "store"
-        const val PHOTO = "photo"
     }
 }
