@@ -1,26 +1,39 @@
 package com.luthfirr.tokoapp.ui.store.visit
 
 import android.Manifest
+import android.annotation.SuppressLint
+import android.app.PendingIntent
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
+import android.location.Location
 import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
+import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
-import android.widget.Toast
+import android.util.Log
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.Geofence
+import com.google.android.gms.location.GeofencingClient
+import com.google.android.gms.location.GeofencingRequest
+import com.google.android.gms.location.LocationServices
 import com.luthfirr.tokoapp.R
 import com.luthfirr.tokoapp.data.local.entity.StoreEntity
 import com.luthfirr.tokoapp.data.remote.network.ApiResponse
 import com.luthfirr.tokoapp.databinding.ActivityStoreVisitBinding
 import com.luthfirr.tokoapp.ui.store.detail.StoreDetailActivity
+import com.luthfirr.tokoapp.utils.GeofenceBroadcastReceiver
 import com.luthfirr.tokoapp.utils.createCustomTempFile
 import com.luthfirr.tokoapp.utils.makeToast
 import com.luthfirr.tokoapp.utils.rotateFile
@@ -32,6 +45,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.io.File
 import java.text.SimpleDateFormat
+import java.util.Calendar
 
 @AndroidEntryPoint
 @Suppress("DEPRECATION")
@@ -40,30 +54,81 @@ class StoreVisitActivity : AppCompatActivity() {
     private lateinit var binding: ActivityStoreVisitBinding
     private val viewModel : StoreVisitViewModel by viewModels()
 
+    private var storeData: StoreEntity? = null
     private lateinit var currentPhotoPath: String
     private var visitedSaved = false
     private var photoSaved = false
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == REQUEST_CODE_PERMISSIONS) {
-            if (!allPermissionsGranted()) {
-                Toast.makeText(
-                    this,
-                    "Tidak mendapatkan permission.",
-                    Toast.LENGTH_SHORT
-                ).show()
-                finish()
+    val calendar = Calendar.getInstance()
+    val currentTimeInMillis = calendar.timeInMillis
+
+    private lateinit var geofencingClient: GeofencingClient
+    private lateinit var geofence: Geofence
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private var locationStatus = Geofence.GEOFENCE_TRANSITION_EXIT
+
+    private val geofencePendingIntent: PendingIntent by lazy {
+        val intent = Intent(this@StoreVisitActivity, GeofenceBroadcastReceiver::class.java)
+        // We use FLAG_UPDATE_CURRENT so that we get the same pending intent back when calling
+        // addGeofences() and removeGeofences().
+        intent.action = ACTION_GEOFENCE_EVENT
+        @SuppressLint("UnspecifiedImmutableFlag")
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            PendingIntent.getBroadcast(
+                this@StoreVisitActivity,
+                0,
+                intent,
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
+            )
+        } else {
+            PendingIntent.getBroadcast(
+                this@StoreVisitActivity,
+                0,
+                intent,
+                PendingIntent.FLAG_UPDATE_CURRENT
+            )
+        }
+    }
+
+    private val receiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            val transition = intent.getIntExtra(TRANSITION, -1)
+            if (transition != -1) {
+                transitionListener(transition)
             }
         }
     }
 
+    private val requestPermissionLauncher =
+        registerForActivityResult(
+            ActivityResultContracts.RequestMultiplePermissions()
+        ) { permissions ->
+            when {
+                permissions[Manifest.permission.ACCESS_FINE_LOCATION] ?: false -> {
+                    getMyLastLocation()
+                }
+                permissions[Manifest.permission.ACCESS_COARSE_LOCATION] ?: false -> {
+                    getMyLastLocation()
+                }
+                permissions[Manifest.permission.CAMERA] ?: false -> {
+                    binding.storeVisitBtnCamera.performClick()
+                }
+                else -> {
+                    finish()
+                }
+            }
+        }
+
+
     private fun allPermissionsGranted() = REQUIRED_PERMISSIONS.all {
         ContextCompat.checkSelfPermission(baseContext, it) == PackageManager.PERMISSION_GRANTED
+    }
+
+    private fun checkPermission(permission: String): Boolean {
+        return ContextCompat.checkSelfPermission(
+            this,
+            permission
+        ) == PackageManager.PERMISSION_GRANTED
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -79,23 +144,40 @@ class StoreVisitActivity : AppCompatActivity() {
             )
         }
 
-        val storeData = intent.getParcelableExtra<StoreEntity>(STORE)
+        geofencingClient = LocationServices.getGeofencingClient(this@StoreVisitActivity)
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this@StoreVisitActivity)
+
+        storeData = intent.getParcelableExtra<StoreEntity>(STORE)
         val myLat = intent.getDoubleExtra(MY_LAT, 0.0)
         val myLong = intent.getDoubleExtra(MY_LONG, 0.0)
 
-        initView(storeData, myLat, myLong)
+        initView()
         initObserver()
-        initListener(storeData)
+        initListener()
 
     }
 
-    private fun initView(storeData : StoreEntity?, lat: Double, long: Double) {
-        binding.apply {
-//            storeVisitTvStoreName.text = storeData?.storeName
-//            storeVisitTvAddress.text = storeData?.address
+    override fun onResume() {
+        super.onResume()
+        if (storeData != null) {
+            addGeofence()
+        }
+        registerReceiver(receiver, IntentFilter(ACTION_GEOFENCE_TRANSITION))
+    }
 
-            storeVisitTvStoreName.text = lat.toString()
-            storeVisitTvAddress.text = long.toString()
+    override fun onPause() {
+        super.onPause()
+        removeGeofence()
+        unregisterReceiver(receiver)
+    }
+
+    private fun initView() {
+        binding.apply {
+            storeVisitTvStoreName.text = storeData?.storeName
+            storeVisitTvAddress.text = storeData?.address
+
+//            storeVisitTvStoreName.text = lat.toString()
+//            storeVisitTvAddress.text = long.toString()
 
             storeVisitTvOutletType.text = resources.getString(
                 R.string.tipe_outlet,
@@ -127,10 +209,10 @@ class StoreVisitActivity : AppCompatActivity() {
                 storeData?.dcName
             )
 
-            storeVisitTvLastVisit.text = storeData?.lastVisited.toString()
+            storeVisitTvLastVisit.text = storeData?.lastVisited.toString() ?: currentTimeInMillis.toString()
 
             if (storeData?.picture != null) {
-                val myFile = File(storeData.picture)
+                val myFile = File(storeData!!.picture)
 
                 myFile.let { file ->
                     rotateFile(file)
@@ -163,7 +245,8 @@ class StoreVisitActivity : AppCompatActivity() {
         }
     }
 
-    private fun initListener(storeData : StoreEntity?) {
+    private fun initListener() {
+
         binding.apply {
             storeVisitBtnReset.setOnClickListener {
                 storeVisitProgressBar.isVisible = true
@@ -189,7 +272,7 @@ class StoreVisitActivity : AppCompatActivity() {
             storeVisitBtnVisit.setOnClickListener {
                 storeData?.roomId?.let {
                     viewModel.updatePicture(it, currentPhotoPath)
-                    viewModel.updateVisited(it, true, System.currentTimeMillis())
+                    viewModel.updateVisited(it, true, currentTimeInMillis)
                 }
                 val intent = Intent(this@StoreVisitActivity, StoreDetailActivity::class.java)
                 intent.putExtra(StoreDetailActivity.STORE, storeData)
@@ -201,15 +284,6 @@ class StoreVisitActivity : AppCompatActivity() {
             }
         }
     }
-
-//    private val launcherIntentCamera = registerForActivityResult(
-//        ActivityResultContracts.StartActivityForResult()
-//    ) {
-//        if (it.resultCode == RESULT_OK) {
-//            val imageBitmap = it.data?.extras?.get("data") as Bitmap
-//            binding.storeVisitIvBackground.setImageBitmap(imageBitmap)
-//        }
-//    }
 
     private fun startTakePhoto() {
         val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
@@ -237,6 +311,130 @@ class StoreVisitActivity : AppCompatActivity() {
                 binding.storeVisitIvBackground.setImageBitmap(BitmapFactory.decodeFile(file.path))
             }
         }
+    }
+
+    private fun transitionListener(geofenceTransition: Int) {
+        when (geofenceTransition) {
+            Geofence.GEOFENCE_TRANSITION_ENTER -> {
+                binding.apply {
+                    storeVisitLocationStatus.text = "Lokasi sesuai"
+                }
+                locationStatus = Geofence.GEOFENCE_TRANSITION_ENTER
+                checkVisitButton()
+            }
+            Geofence.GEOFENCE_TRANSITION_EXIT -> {
+                binding.apply {
+                    storeVisitLocationStatus.text = "Lokasi belum sesuai"
+
+                }
+                locationStatus = Geofence.GEOFENCE_TRANSITION_EXIT
+                checkVisitButton()
+            }
+        }
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun getMyLastLocation() {
+        if (checkPermission(Manifest.permission.ACCESS_FINE_LOCATION) && checkPermission(Manifest.permission.ACCESS_COARSE_LOCATION))
+        {
+            fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
+                if (location == null) {
+                    makeToast(this@StoreVisitActivity, "Location is not found. Try again")
+
+                }
+            }
+        }
+        else {
+            requestPermissionLauncher.launch(
+                arrayOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                )
+            )
+        }
+    }
+
+//    @SuppressLint("MissingPermission")
+//    private fun getMyLastLocation() {
+//        if (checkPermission(Manifest.permission.ACCESS_FINE_LOCATION) && checkPermission(Manifest.permission.ACCESS_COARSE_LOCATION))
+//        {
+//            fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
+//                if (location != null) {
+//                    makeToast(this@StoreVisitActivity, "Location found")
+//                } else {
+//                    val locationRequest =
+//                        LocationRequest.Builder(
+//                            Priority.PRIORITY_HIGH_ACCURACY,
+//                            TimeUnit.SECONDS.toMillis(1)
+//                        )
+//                            .build()
+//                    val locationCallback = object : LocationCallback() {
+//                        override fun onLocationResult(location: LocationResult) {
+//                            getMyLastLocation()
+//                        }
+//                    }
+//                    fusedLocationClient.requestLocationUpdates(
+//                        locationRequest,
+//                        locationCallback,
+//                        null
+//                    )
+//                    makeToast(this@StoreVisitActivity, "Location is not found. Try again")
+//                }
+//            }
+//        }
+//        else {
+//            requestPermissionLauncher.launch(
+//                arrayOf(
+//                    Manifest.permission.ACCESS_FINE_LOCATION,
+//                    Manifest.permission.ACCESS_COARSE_LOCATION
+//                )
+//            )
+//        }
+//    }
+
+    private fun getGeofencingRequest(): GeofencingRequest {
+        return GeofencingRequest.Builder().apply {
+            setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER)
+            addGeofence(geofence)
+        }.build()
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun addGeofence() {
+        if (checkPermission(Manifest.permission.ACCESS_FINE_LOCATION) &&
+            checkPermission(Manifest.permission.ACCESS_BACKGROUND_LOCATION)
+        ) {
+            removeGeofence()
+            geofencingClient.addGeofences(getGeofencingRequest(), geofencePendingIntent)
+                .addOnSuccessListener { Log.d("test", "geofence added") }
+                .addOnFailureListener {
+                    it.printStackTrace()
+                    makeToast(this@StoreVisitActivity, it.localizedMessage!!)
+                }
+        } else {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                requestPermissionLauncher.launch(
+                    arrayOf(
+                        Manifest.permission.ACCESS_FINE_LOCATION,
+                        Manifest.permission.ACCESS_BACKGROUND_LOCATION
+                    )
+                )
+            } else {
+                requestPermissionLauncher.launch(
+                    arrayOf(
+                        Manifest.permission.ACCESS_FINE_LOCATION
+                    )
+                )
+            }
+        }
+    }
+
+    private fun removeGeofence() {
+        geofencingClient.removeGeofences(geofencePendingIntent)
+    }
+
+    private fun checkVisitButton() {
+        binding.storeVisitBtnVisit.isEnabled = locationStatus == Geofence.GEOFENCE_TRANSITION_ENTER && currentPhotoPath != null
     }
 
     companion object {

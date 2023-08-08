@@ -14,14 +14,16 @@ class GeofenceBroadcastReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         if (intent.action == StoreVisitActivity.ACTION_GEOFENCE_EVENT) {
             val geofencingEvent = GeofencingEvent.fromIntent(intent)
-            if (geofencingEvent.hasError()) {
-                GeofenceStatusCodes
-                    .getStatusCodeString(geofencingEvent.errorCode)
-                return
+            if (geofencingEvent != null) {
+                if (geofencingEvent.hasError()) {
+                    GeofenceStatusCodes
+                        .getStatusCodeString(geofencingEvent.errorCode)
+                    return
+                }
             }
 
             // Test that the reported transition was of interest.
-            when (geofencingEvent.geofenceTransition) {
+            when (geofencingEvent?.geofenceTransition) {
                 Geofence.GEOFENCE_TRANSITION_ENTER -> {
                     val transitionIntent = Intent(StoreVisitActivity.ACTION_GEOFENCE_TRANSITION)
                     val bundle =
