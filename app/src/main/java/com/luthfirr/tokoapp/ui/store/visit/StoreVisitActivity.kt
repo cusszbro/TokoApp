@@ -80,17 +80,22 @@ class StoreVisitActivity : AppCompatActivity() {
         }
 
         val storeData = intent.getParcelableExtra<StoreEntity>(STORE)
+        val myLat = intent.getDoubleExtra(MY_LAT, 0.0)
+        val myLong = intent.getDoubleExtra(MY_LONG, 0.0)
 
-        initView(storeData)
+        initView(storeData, myLat, myLong)
         initObserver()
         initListener(storeData)
 
     }
 
-    private fun initView(storeData : StoreEntity?) {
+    private fun initView(storeData : StoreEntity?, lat: Double, long: Double) {
         binding.apply {
-            storeVisitTvStoreName.text = storeData?.storeName
-            storeVisitTvAddress.text = storeData?.address
+//            storeVisitTvStoreName.text = storeData?.storeName
+//            storeVisitTvAddress.text = storeData?.address
+
+            storeVisitTvStoreName.text = lat.toString()
+            storeVisitTvAddress.text = long.toString()
 
             storeVisitTvOutletType.text = resources.getString(
                 R.string.tipe_outlet,
@@ -137,7 +142,7 @@ class StoreVisitActivity : AppCompatActivity() {
     }
 
     private fun initObserver() {
-        lifecycleScope.launchWhenResumed {
+        lifecycleScope.launchWhenStarted {
             viewModel.storePictureResult.collectLatest { apiResponse ->
                 binding.storeVisitProgressBar.isVisible = apiResponse is ApiResponse.Loading
                 if (apiResponse is ApiResponse.Error) makeToast(this@StoreVisitActivity, apiResponse.errorMessage)
@@ -236,6 +241,8 @@ class StoreVisitActivity : AppCompatActivity() {
 
     companion object {
         const val STORE = "store"
+        const val MY_LAT = "my_latitude"
+        const val MY_LONG = "my_longitude"
 
         private val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.CAMERA)
         private const val REQUEST_CODE_PERMISSIONS = 10

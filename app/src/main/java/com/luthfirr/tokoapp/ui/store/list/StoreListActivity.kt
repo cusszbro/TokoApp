@@ -43,6 +43,9 @@ class StoreListActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private var boundsBuilder = LatLngBounds.builder()
 
+    var myLat = 0.0
+    var myLong = 0.0
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityListStoreBinding.inflate(layoutInflater)
@@ -101,6 +104,8 @@ class StoreListActivity : AppCompatActivity(), OnMapReadyCallback {
         {
             mMap.isMyLocationEnabled = true
             fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
+                myLat = location?.latitude ?: 0.0
+                myLong = location?.longitude ?: 0.0
                 if (location != null) {
                     showStartMarker(location)
                 } else {
@@ -169,6 +174,8 @@ class StoreListActivity : AppCompatActivity(), OnMapReadyCallback {
         listStoreAdapter.storeListener = {
             intent = Intent(this@StoreListActivity, StoreVisitActivity::class.java)
             intent.putExtra(StoreVisitActivity.STORE, it)
+            intent.putExtra(StoreVisitActivity.MY_LAT, myLat)
+            intent.putExtra(StoreVisitActivity.MY_LONG, myLong)
             startActivity(intent)
         }
     }
